@@ -57,26 +57,29 @@ export default function App() {
 	if (gameIsOver && userNumber) {
 		screen = (
 			<GameOverScreen
-				userNumber={userNumber} 
+				userNumber={userNumber}
 				roundsNumber={guessRounds}
 				onStartNewGame={startNewGameHandler}
 			/>
 		);
 	}
 	return (
-		<LinearGradient 
-			colors={[Colors.primary700, Colors.accent500]}
-			style={styles.rootScreen}
-		>
-			<ImageBackground
-				source={require("./assets/images/background.jpg")}
-				resizeMode="cover"
+		<>
+			<StatusBar style="light"/>
+			<LinearGradient
+				colors={[Colors.primary700, Colors.accent500]}
 				style={styles.rootScreen}
-				imageStyle={styles.backgroundImage}
 			>
-				<SafeAreaView style={styles.rootScreen}>{screen}</SafeAreaView>
-			</ImageBackground>
-		</LinearGradient>
+				<ImageBackground
+					source={require("./assets/images/background.jpg")}
+					resizeMode="cover"
+					style={styles.rootScreen}
+					imageStyle={styles.backgroundImage}
+				>
+					<SafeAreaView style={styles.rootScreen}>{screen}</SafeAreaView>
+				</ImageBackground>
+			</LinearGradient>
+		</>
 	);
 }
 
