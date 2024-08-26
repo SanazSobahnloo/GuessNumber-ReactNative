@@ -8,29 +8,63 @@ import {
 } from "react-native";
 import StartGameScreen from "./screens/StartGameScreen";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useState } from "react";
+import { useFonts } from "expo-font";
+import React, { useState, useEffect } from "react";
 import GameScreen from "./screens/GameScreen";
 import Colors from "./constants/colors";
 import GameOverScreen from "./screens/GameOverScreen";
+import * as SplashScreen from "expo-splash-screen";
+SplashScreen.preventAutoHideAsync();
 export default function App() {
 	const [userNumber, setUserNumber] = useState();
 	const [gameIsOver, setGameIsOver] = useState(true);
+	const [guessRounds, setGuessRounds] = useState(0);
+	const [fontsLoaded] = useFonts({
+		"open-sans": require("./assets/fonts/OpenSans-Regular.ttf"),
+		"open-sans-bold": require("./assets/fonts/OpenSans-Bold.ttf"),
+	});
+
+	useEffect(() => {
+		async function prepare() {
+			if (fontsLoaded) {
+				await SplashScreen.hideAsync();
+			}
+		}
+		prepare();
+	}, [fontsLoaded]);
+	if (!fontsLoaded) {
+		return null;
+	}
 
 	const pickedNumberHandler = (pickedNumber) => {
 		setUserNumber(pickedNumber);
+		setGameIsOver(false);
 	};
-	const gameOverHandler = () => {
-		startGameIsOver(true);
+	const gameOverHandler = (numberOfRounds) => {
+		setGameIsOver(true);
+		setGuessRounds(numberOfRounds);
+	};
+	const startNewGameHandler = () => {
+		setUserNumber(null);
+		setGuessRounds(0);
 	};
 	let screen = <StartGameScreen onPickNumber={pickedNumberHandler} />;
 	if (userNumber) {
-		screen = <GameScreen userNumber={userNumber} onGameOver={gameOverHandler} />;
+		screen = (
+			<GameScreen userNumber={userNumber} onGameOver={gameOverHandler} />
+		);
 	}
 	if (gameIsOver && userNumber) {
-		screen = <GameOverScreen />;
+		screen = (
+			<GameOverScreen
+				userNumber={userNumber} 
+				roundsNumber={guessRounds}
+				onStartNewGame={startNewGameHandler}
+			/>
+		);
 	}
 	return (
-		<LinearGradient
+		<LinearGradient 
 			colors={[Colors.primary700, Colors.accent500]}
 			style={styles.rootScreen}
 		>
